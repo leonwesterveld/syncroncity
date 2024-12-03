@@ -36,7 +36,7 @@ export default function App() {
       >
         <Tab.Screen name="Profiel" component={Profile} />
         <Tab.Screen name="Home" component={Choises} />
-        <Tab.Screen name="Matches" component={Matches} />
+        <Tab.Screen name="Matches" component={Matches} /> 
     </Tab.Navigator>
   );
 }
