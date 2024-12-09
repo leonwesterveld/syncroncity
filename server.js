@@ -25,7 +25,7 @@ db.getConnection((err, connection) => {
   if (err) {
     console.error("Error connecting to the database:", err);
     return;
-  }
+  } 
   console.log("Connected to the Hostinger MySQL database");
   connection.release();
 });
