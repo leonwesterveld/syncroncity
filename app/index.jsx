@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Button, TextInput, Picker } from "react-native"
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const Tab = createBottomTabNavigator();
 
@@ -98,66 +99,60 @@ export default function App() {
 
   if (!isLoggedIn) {
     return (
-      <View style={styles.container}>
+      <LinearGradient
+        colors={['#FF76CE', '#F72C5B']}
+        style={styles.container} // Container styles hier gebruiken
+        start={{ x: 0.3, y: 0 }}
+        end={{ x: 0.7, y: 1 }}
+      >
         {isLogin ? (
           <View style={styles.formLogin}>
             <Text style={styles.header}>Login</Text>
             <TextInput
-              style={styles.login}
+              style={styles.input}
               placeholder="Name"
               value={name}
               onChangeText={setName}
             />
             <TextInput
-              style={styles.login}
+              style={styles.input}
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
-            <Button title="Login"
-             onPress={handleLogin}
-             color="#FF2929"
-             />
-            <Button
-              title="Go to Register"
-              onPress={() => setIsLogin(false)}
-              color="#FF2929"
-            />
+            <Button title="Login" onPress={handleLogin} />
+            <Button title="Go to Register" onPress={() => setIsLogin(false)} />
           </View>
         ) : (
           <View style={styles.formRegister}>
             <Text style={styles.header}>Register</Text>
             <TextInput
-              style={styles.login}
+              style={styles.input}
               placeholder="Name"
               value={name}
               onChangeText={setName}
             />
             <TextInput
-              style={styles.login}
+              style={styles.input}
               placeholder="Phone Number"
               value={phone}
               onChangeText={setPhone}
               keyboardType="phone-pad"
             />
             <TextInput
-              style={styles.login}
+              style={styles.input}
               placeholder="Password"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
             <Button title="Register" onPress={handleRegister} />
-            <Button
-              title="Go to Login"
-              onPress={() => setIsLogin(true)}
-              color="#FF2929"
-            />
+            <Button title="Go to Login" onPress={() => setIsLogin(true)} />
           </View>
         )}
         {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
-      </View>
+      </LinearGradient>
     );
   }
 
@@ -358,15 +353,22 @@ function Matches() {
   );
 }
 
+<LinearGradient
+    colors= {["#FF76CE" , "F72C5B",]} 
+    start={{x: 0.3, y: 0}}
+    end={{x: 0.7, y: 1}}
+  />
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f4f4f8',
+    backgroundColor: '#E73879',
     padding: 20,
     gap: 10,
   },
+
 
   formRegister: {
     width: '100%',
