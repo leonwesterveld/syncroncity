@@ -189,12 +189,19 @@ export default function App() {
 
 function Profile({ user, onLogout }) {
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Profile</Text>
-      <Text>Name: {user.name}</Text>
-      <Text>Phone: {user.phone}</Text>
-      <Button title="Logout" onPress={onLogout} />
-    </View>
+    <LinearGradient
+      colors={['#FF76CE', '#FFCFEF']}
+      style={styles.container} // Container styles hier gebruiken
+      start={{ x: 0.3, y: 0 }}
+      end={{ x: 0.7, y: 1 }}
+    >
+      <View style={styles.container}>
+        <Text style={styles.header}>Profile</Text>
+        <Text>Name: {user.name}</Text>
+        <Text>Phone: {user.phone}</Text>
+        <Button title="Logout" onPress={onLogout} />
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -284,79 +291,92 @@ function Choises({ user }) {
   };
 
   return (
-    <View style={styles.container}>
-      {/* Buttons to select database */}
-      <View style={styles.section}>
-        <Button
-          title="denk"
-          onPress={() => handleButtonPress("denk")}
-          color={selectedButton === "denk" ? "red" : "#7f8c8d"}
-          style={styles.red}
-        />
-        <Button
-          title="droom"
-          onPress={() => handleButtonPress("droom")}
-          color={selectedButton === "droom" ? "red" : "#7f8c8d"}
-        />
-      </View>
-
-      {/* Choice Picker */}
-      <View style={styles.section2}>
-        <Picker
-          selectedValue={selectedValue}
-          style={styles.picker}
-          onValueChange={handleValueChange}
-        >
-          <Picker.Item label="ding1" value="ding1" />
-          <Picker.Item label="ding2" value="ding2" />
-          <Picker.Item label="ding3" value="ding3" />
-          <Picker.Item label="ding4" value="ding4" />
-          <Picker.Item label="other" value="other" />
-        </Picker>
-        {selectedValue === "other" && (
-          <TextInput
-            style={styles.textInput}
-            placeholder="Enter"
-            value={customValue}
-            onChangeText={setCustomValue}
-          />
-        )}
-      </View>
-
-      {/* Time Picker */}
-      <Picker
-        selectedValue={timeValue}
-        style={styles.picker}
-        onValueChange={(value) => setTimeValue(value)}
+    <LinearGradient
+        colors={['#FF76CE', '#FFCFEF']}
+        style={styles.container} // Container styles hier gebruiken
+        start={{ x: 0.3, y: 0 }}
+        end={{ x: 0.7, y: 1 }}
       >
-        <Picker.Item label="zo juist" value="zojuist" />
-        <Picker.Item label="1 uur geleden" value="1uur" />
-        <Picker.Item label="2 uur geleden" value="2uur" />
-        <Picker.Item label="vandaag" value="vandaag" />
-        <Picker.Item label="gister" value="gister" />
-      </Picker>
+        <View style={styles.container}>
+          {/* Buttons to select database */}
+          <View style={styles.section}>
+            <Button
+              title="denk"
+              onPress={() => handleButtonPress("denk")}
+              color={selectedButton === "denk" ? "red" : "#7f8c8d"}
+              style={styles.red}
+            />
+            <Button
+              title="droom"
+              onPress={() => handleButtonPress("droom")}
+              color={selectedButton === "droom" ? "red" : "#7f8c8d"}
+            />
+          </View>
 
-      {/* Save button */}
-      <Button title="Save Choices" onPress={handleSaveChoices} />
+          {/* Choice Picker */}
+          <View style={styles.section2}>
+            <Picker
+              selectedValue={selectedValue}
+              style={styles.picker}
+              onValueChange={handleValueChange}
+            >
+              <Picker.Item label="ding1" value="ding1" />
+              <Picker.Item label="ding2" value="ding2" />
+              <Picker.Item label="ding3" value="ding3" />
+              <Picker.Item label="ding4" value="ding4" />
+              <Picker.Item label="other" value="other" />
+            </Picker>
+            {selectedValue === "other" && (
+              <TextInput
+                style={styles.textInput}
+                placeholder="Enter"
+                value={customValue}
+                onChangeText={setCustomValue}
+              />
+            )}
+          </View>
 
-      {/* Display alert message */}
-      {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
-    </View>
+          {/* Time Picker */}
+          <Picker
+            selectedValue={timeValue}
+            style={styles.picker}
+            onValueChange={(value) => setTimeValue(value)}
+          >
+            <Picker.Item label="zo juist" value="zojuist" />
+            <Picker.Item label="1 uur geleden" value="1uur" />
+            <Picker.Item label="2 uur geleden" value="2uur" />
+            <Picker.Item label="vandaag" value="vandaag" />
+            <Picker.Item label="gister" value="gister" />
+          </Picker>
+
+          {/* Save button */}
+          <Button title="Save Choices" onPress={handleSaveChoices} />
+
+          {/* Display alert message */}
+        </View>
+        {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
+      </LinearGradient>
   );
 }
 
 function Matches() {
-  return (
+  return (<LinearGradient
+    colors={['#FF76CE', '#FFCFEF']}
+    style={styles.container} // Container styles hier gebruiken
+    start={{ x: 0.3, y: 0 }}
+    end={{ x: 0.7, y: 1 }}
+  >
     <View style={styles.container}>
       <Text>Matches screen</Text>
     </View>
+    </LinearGradient>
   );
 }
 
 <LinearGradient
     colors= {["#FF76CE" , "F72C5B",]} 
-    start={{x: 0.3, y: 0}}
-    end={{x: 0.7, y: 1}}
+    start={{x: 0.9, y: 1}}
+    end={{x: 300, y: 1}}
   />
 
 const styles = StyleSheet.create({
@@ -364,7 +384,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#E73879',
     padding: 20,
     gap: 10,
   },
