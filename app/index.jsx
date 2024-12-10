@@ -100,7 +100,7 @@ export default function App() {
     return (
       <View style={styles.container}>
         {isLogin ? (
-          <View style={styles.form}>
+          <View style={styles.formLogin}>
             <Text style={styles.header}>Login</Text>
             <TextInput
               style={styles.login}
@@ -115,15 +115,18 @@ export default function App() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            <Button title="Login" onPress={handleLogin} />
+            <Button title="Login"
+             onPress={handleLogin}
+             color="#FF2929"
+             />
             <Button
               title="Go to Register"
               onPress={() => setIsLogin(false)}
-              color="#6c63ff"
+              color="#FF2929"
             />
           </View>
         ) : (
-          <View style={styles.form}>
+          <View style={styles.formRegister}>
             <Text style={styles.header}>Register</Text>
             <TextInput
               style={styles.login}
@@ -149,7 +152,7 @@ export default function App() {
             <Button
               title="Go to Login"
               onPress={() => setIsLogin(true)}
-              color="#6c63ff"
+              color="#FF2929"
             />
           </View>
         )}
@@ -358,67 +361,101 @@ function Matches() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f4f4f4",
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f4f4f8',
     padding: 20,
-    gap: 10
+    gap: 10,
   },
-  form: {
-    marginBottom: 20,
+
+  formRegister: {
+    width: '100%',
+    height:'60%',
+    maxWidth: 400,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    gap:50,
   },
-  red: {
-    backgroundColor: "red",
+  formLogin: {
+    width: '100%',
+    height:'50%',
+    maxWidth: 400,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    gap:50,
   },
+
   header: {
     fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
   },
-  login: {
-    width: "100%",
-    padding: 10,
-    marginVertical: 10,
+
+  input: {
+    height: 50,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 5,
-    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    backgroundColor: '#f9f9f9',
   },
+
+  buttonContainer: {
+    marginVertical: 10,
+  },
+
   alertText: {
-    color: "red",
+    color: 'red',
     marginTop: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
+
   section: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: 200,
     gap: 10,
   },
+
   section2: {
-    flexDirection: "column",
+    flexDirection: 'column',
     gap: 10,
-    position: "relative",
+    position: 'relative',
     width: 200,
   },
+
   picker: {
     height: 50,
     width: 200,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: '#e0e0e0',
     borderRadius: 5,
-    border: "none",
     gap: 10,
   },
+
   textInput: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
     left: 0,
     zIndex: 2,
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     height: 50,
     width: 150,
-    borderColor: "#eee",
+    borderColor: '#eee',
     borderWidth: 1,
     paddingLeft: 10,
   },
