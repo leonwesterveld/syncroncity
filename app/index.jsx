@@ -44,7 +44,7 @@ export default function App() {
       const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, password }),
+        body: JSON.stringify({ name, password }), 
       });
       const data = await response.json();
 
@@ -87,12 +87,11 @@ export default function App() {
     }
   };
 
-  const handleLogout = async () => { 
+  const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("user");
       setUser(null);
       setIsLoggedIn(false);
-      setAlertMessage("Logged out successfully.");
     } catch (error) {
       setAlertMessage("Failed to log out.");
     }
@@ -100,69 +99,8 @@ export default function App() {
 
   if (!isLoggedIn) {
     return (
-<<<<<<< HEAD
-      <>
-        <View style={styles.container}>
-          {isLogin ? (
-            <View style={styles.form}>
-              <Text style={styles.header}>Login</Text>
-              <TextInput
-                style={styles.login}
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-              />
-              <TextInput
-                style={styles.login}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-              <Button title="Login" onPress={handleLogin} />
-              <Button
-                title="Go to Register"
-                onPress={() => setIsLogin(false)}
-                color="#6c63ff"
-              />
-            </View>
-          ) : (
-            <View style={styles.form}>
-              <Text style={styles.header}>Register</Text>
-              <TextInput
-                style={styles.login}
-                placeholder="Name"
-                value={name}
-                onChangeText={setName}
-              />
-              <TextInput
-                style={styles.login}
-                placeholder="Phone Number"
-                value={phone}
-                onChangeText={setPhone}
-                keyboardType="phone-pad"
-              />
-              <TextInput
-                style={styles.login}
-                placeholder="Password"
-                value={password}
-                onChangeText={setPassword}
-                secureTextEntry
-              />
-              <Button title="Register" onPress={handleRegister} />
-              <Button
-                title="Go to Login"
-                onPress={() => setIsLogin(true)}
-                color="#6c63ff"
-              />
-            </View>
-          )}
-          </View>
-        {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
-    </>
-=======
       <LinearGradient
-        colors={['#FF76CE', '#F72C5B']}
+        colors={['#FF76CE', '#FFCFEF']}
         style={styles.container} // Container styles hier gebruiken
         start={{ x: 0.3, y: 0 }}
         end={{ x: 0.7, y: 1 }}
@@ -215,7 +153,6 @@ export default function App() {
         )}
         {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
       </LinearGradient>
->>>>>>> 8d38ec29fc4d3291333cf69869113892f2fef189
     );
   }
 
@@ -262,18 +199,48 @@ function Profile({ user, onLogout }) {
 }
 
 function Choises({ user }) {
-  const [selectedButton, setSelectedButton] = useState("");
+  const [selectedButton, setSelectedButton] = useState(""); // Track which button is selected
   const [selectedValue, setSelectedValue] = useState("");
-  const [customValue, setCustomValue] = useState("");
+  const [customValue, setCustomValue] = useState(""); // Store the value entered for "other"
   const [timeValue, setTimeValue] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
+  const [isTimeout, setIsTimeout] = useState(false);
+
+  useEffect(() => {
+    const checkTimeout = async () => {
+      try {
+        const lastSubmissionTime = await AsyncStorage.getItem("submissionTime");
+        console.log("Last submission time:", lastSubmissionTime);  // Debugging line
+        if (lastSubmissionTime) {
+          const timeElapsed = Date.now() - new Date(lastSubmissionTime).getTime();
+          console.log("Time elapsed (ms):", timeElapsed); // Debugging line
+          if (timeElapsed > 3600000) { // 1 hour in milliseconds
+            setIsTimeout(true);
+            setAlertMessage("You can no longer submit your choices after 1 hour.");
+          } else {
+            setIsTimeout(false);
+          }
+        } else {
+          setIsTimeout(false); // No submission time found, assume it's valid
+        }
+      } catch (error) {
+        console.error("Error checking submission time:", error);
+      }
+    };
+
+    checkTimeout();
+  }, []);
 
   const handleButtonPress = (value) => {
     setSelectedButton(value);
-    setAlertMessage(`You selected ${value}`);
   };
 
   const handleSaveChoices = async () => {
+    if (isTimeout) {
+      console.log("Timeout is active, cannot submit choices."); // Debugging line
+      return; // If it's past the timeout, do not submit
+    }
+
     if (!selectedButton) {
       setAlertMessage("Please select either 'denk' or 'droom' first.");
       return;
@@ -298,6 +265,7 @@ function Choises({ user }) {
 
       if (response.ok) {
         setAlertMessage("Choices saved successfully.");
+        await AsyncStorage.setItem("submissionTime", new Date().toString()); // Store current time of submission
       } else {
         setAlertMessage(data.message || "Failed to save choices.");
       }
@@ -306,60 +274,74 @@ function Choises({ user }) {
     }
   };
 
+  const handleValueChange = (value) => {
+    if (value === "other") {
+      setSelectedValue("other");
+    } else {
+      setSelectedValue(value);
+      setCustomValue("");
+    }
+  };
+
   return (
-    <>
-      <View style={styles.container}>
-        <View style={styles.section}>
-          <Button
-            title="denk"
-            onPress={() => handleButtonPress("denk")}
-            color={selectedButton === "denk" ? "red" : "#7f8c8d"}
-          />
-          <Button
-            title="droom"
-            onPress={() => handleButtonPress("droom")}
-            color={selectedButton === "droom" ? "red" : "#7f8c8d"}
-          />
-        </View>
+    <View style={styles.container}>
+      {/* Buttons to select database */}
+      <View style={styles.section}>
+        <Button
+          title="denk"
+          onPress={() => handleButtonPress("denk")}
+          color={selectedButton === "denk" ? "red" : "#7f8c8d"}
+          style={styles.red}
+        />
+        <Button
+          title="droom"
+          onPress={() => handleButtonPress("droom")}
+          color={selectedButton === "droom" ? "red" : "#7f8c8d"}
+        />
+      </View>
 
-        <View style={styles.section2}>
-          <Picker
-            selectedValue={selectedValue}
-            style={styles.picker}
-            onValueChange={(value) => setSelectedValue(value)}
-          >
-            <Picker.Item label="ding1" value="ding1" />
-            <Picker.Item label="ding2" value="ding2" />
-            <Picker.Item label="ding3" value="ding3" />
-            <Picker.Item label="ding4" value="ding4" />
-            <Picker.Item label="other" value="other" />
-          </Picker>
-          {selectedValue === "other" && (
-            <TextInput
-              style={styles.textInput}
-              placeholder="Enter"
-              value={customValue}
-              onChangeText={setCustomValue}
-            />
-          )}
-        </View>
-
+      {/* Choice Picker */}
+      <View style={styles.section2}>
         <Picker
-          selectedValue={timeValue}
+          selectedValue={selectedValue}
           style={styles.picker}
-          onValueChange={(value) => setTimeValue(value)}
+          onValueChange={handleValueChange}
         >
-          <Picker.Item label="zo juist" value="zojuist" />
-          <Picker.Item label="1 uur geleden" value="1uur" />
-          <Picker.Item label="2 uur geleden" value="2uur" />
-          <Picker.Item label="vandaag" value="vandaag" />
-          <Picker.Item label="gister" value="gister" />
+          <Picker.Item label="ding1" value="ding1" />
+          <Picker.Item label="ding2" value="ding2" />
+          <Picker.Item label="ding3" value="ding3" />
+          <Picker.Item label="ding4" value="ding4" />
+          <Picker.Item label="other" value="other" />
         </Picker>
+        {selectedValue === "other" && (
+          <TextInput
+            style={styles.textInput}
+            placeholder="Enter"
+            value={customValue}
+            onChangeText={setCustomValue}
+          />
+        )}
+      </View>
 
-        <Button title="Save Choices" onPress={handleSaveChoices} />
-        </View>
+      {/* Time Picker */}
+      <Picker
+        selectedValue={timeValue}
+        style={styles.picker}
+        onValueChange={(value) => setTimeValue(value)}
+      >
+        <Picker.Item label="zo juist" value="zojuist" />
+        <Picker.Item label="1 uur geleden" value="1uur" />
+        <Picker.Item label="2 uur geleden" value="2uur" />
+        <Picker.Item label="vandaag" value="vandaag" />
+        <Picker.Item label="gister" value="gister" />
+      </Picker>
+
+      {/* Save button */}
+      <Button title="Save Choices" onPress={handleSaveChoices} />
+
+      {/* Display alert message */}
       {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
-  </>
+    </View>
   );
 }
 
@@ -380,16 +362,6 @@ function Matches() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-<<<<<<< HEAD
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#f4f4f4",
-    padding: 20,
-    gap: 10,
-  },
-  form: {
-    marginBottom: 20,
-=======
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#E73879',
@@ -411,51 +383,83 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 5,
     gap:50,
->>>>>>> 8d38ec29fc4d3291333cf69869113892f2fef189
   },
+  formLogin: {
+    width: '100%',
+    height:'50%',
+    maxWidth: 400,
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    gap:50,
+  },
+
   header: {
     fontSize: 24,
-    fontWeight: "bold",
-    textAlign: "center",
+    fontWeight: 'bold',
     marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
   },
-  login: {
-    width: "100%",
-    padding: 10,
-    marginVertical: 10,
+
+  input: {
+    height: 50,
+    borderColor: '#ccc',
     borderWidth: 1,
-    borderColor: "#ddd",
     borderRadius: 5,
-    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    marginBottom: 15,
+    backgroundColor: '#f9f9f9',
   },
+
+  buttonContainer: {
+    marginVertical: 10,
+  },
+
   alertText: {
-    color: "red",
+    color: 'red',
     marginTop: 10,
-    textAlign: "center",
+    textAlign: 'center',
   },
+
   section: {
-    flexDirection: "row",
-    justifyContent: "space-between",
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: 200,
     gap: 10,
   },
+
   section2: {
-    flexDirection: "column",
+    flexDirection: 'column',
     gap: 10,
+    position: 'relative',
     width: 200,
   },
+
   picker: {
     height: 50,
     width: 200,
-    backgroundColor: "#e0e0e0",
+    backgroundColor: '#e0e0e0',
     borderRadius: 5,
+    gap: 10,
   },
+
   textInput: {
-    backgroundColor: "#eee",
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 2,
+    backgroundColor: '#eee',
     height: 50,
     width: 150,
-    borderColor: "#eee",
+    borderColor: '#eee',
     borderWidth: 1,
     paddingLeft: 10,
   },
 });
+
