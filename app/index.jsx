@@ -100,7 +100,7 @@ export default function App() {
   if (!isLoggedIn) {
     return (
       <LinearGradient
-        colors={['#FF76CE', '#F72C5B']}
+        colors={['#FF76CE', '#FFCFEF']}
         style={styles.container} // Container styles hier gebruiken
         start={{ x: 0.3, y: 0 }}
         end={{ x: 0.7, y: 1 }}
