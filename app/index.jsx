@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Button, TextInput, Picker } from "react-native";
+import { StyleSheet, View, Text, Button, TextInput, Picker, TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
@@ -121,8 +121,12 @@ export default function App() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            <Button title="Login" onPress={handleLogin} />
-            <Button title="Go to Register" onPress={() => setIsLogin(false)} />
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
+              <Text style={styles.buttonText}>Login</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setIsLogin(false)}>
+              <Text style={styles.secondaryButtonText}>Go to Register</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           <View style={styles.formRegister}>
@@ -147,10 +151,14 @@ export default function App() {
               onChangeText={setPassword}
               secureTextEntry
             />
-            <Button title="Register" onPress={handleRegister} />
-            <Button title="Go to Login" onPress={() => setIsLogin(true)} />
+            <TouchableOpacity style={styles.button} onPress={handleRegister}>
+              <Text style={styles.buttonText}>Register</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.secondaryButton} onPress={() => setIsLogin(true)}>
+              <Text style={styles.secondaryButtonText}>Go to Login</Text>
+            </TouchableOpacity>
           </View>
-        )}
+        )}  
         {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
       </LinearGradient>
     );
@@ -391,7 +399,7 @@ const styles = StyleSheet.create({
 
   formRegister: {
     width: '100%',
-    height:'60%',
+    height:'70%',
     maxWidth: 400,
     backgroundColor: '#ffffff',
     borderRadius: 10,
@@ -405,9 +413,9 @@ const styles = StyleSheet.create({
   },
   formLogin: {
     width: '100%',
-    height:'50%',
+    height:'60%',
     maxWidth: 400,
-    backgroundColor: '#ffffff',
+    backgroundColor: '#faedf6',
     borderRadius: 10,
     padding: 20,
     shadowColor: '#000',
@@ -479,6 +487,33 @@ const styles = StyleSheet.create({
     borderColor: '#eee',
     borderWidth: 1,
     paddingLeft: 10,
+  },
+
+  button: {
+    backgroundColor: '#FF76CE',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+
+  buttonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  
+  secondaryButton: {
+    backgroundColor: '#f7c1e7',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  secondaryButtonText: {
+    color: '#800554',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
