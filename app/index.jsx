@@ -100,7 +100,7 @@ export default function App() {
   if (!isLoggedIn) {
     return (
       <LinearGradient
-        colors={['#FF76CE', '#FFCFEF']}
+        colors= {["#D5B898" , "#DFC2A2",]}    
         style={styles.container} // Container styles hier gebruiken
         start={{ x: 0.3, y: 0 }}
         end={{ x: 0.7, y: 1 }}
@@ -159,7 +159,6 @@ export default function App() {
             </TouchableOpacity>
           </View>
         )}  
-        {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
       </LinearGradient>
     );
   }
@@ -235,7 +234,7 @@ function Profile({ user, onLogout }) {
 
   return (
     <LinearGradient
-      colors={['#FF76CE', '#FFCFEF']}
+      colors= {["#D5B898" , "#DFC2A2",]}    
       style={styles.container}
       start={{ x: 0.3, y: 0 }}
       end={{ x: 0.7, y: 1 }}
@@ -281,9 +280,8 @@ function Profile({ user, onLogout }) {
         )}
 
         {/* Display Error Messages */}
-        {errorMessage && <Text style={styles.alertText}>{errorMessage}</Text>}
 
-        <Button title="Logout" onPress={onLogout} />
+        <Button style={styles.button} title="Logout" onPress={onLogout} />
       </View>
     </LinearGradient>
   );
@@ -346,7 +344,7 @@ function Choises({ user }) {
 
   return (
     <LinearGradient
-        colors={['#FF76CE', '#FFCFEF']}
+        colors= {["#D5B898" , "#DFC2A2",]}    
         style={styles.container} // Container styles hier gebruiken
         start={{ x: 0.3, y: 0 }}
         end={{ x: 0.7, y: 1 }}
@@ -404,18 +402,17 @@ function Choises({ user }) {
           </Picker>
 
           {/* Save button */}
-          <Button title="Save Choices" onPress={handleSaveChoices} />
+          <Button style={styles.button} title="Save Choices" onPress={handleSaveChoices} />
 
           {/* Display alert message */}
         </View>
-        {alertMessage && <Text style={styles.alertText}>{alertMessage}</Text>}
       </LinearGradient>
   );
 }
 
 function Matches() {
   return (<LinearGradient
-    colors={['#FF76CE', '#FFCFEF']}
+    colors= {["#D5B898" , "#DFC2A2",]}    
     style={styles.container} // Container styles hier gebruiken
     start={{ x: 0.3, y: 0 }}
     end={{ x: 0.7, y: 1 }}
@@ -428,7 +425,7 @@ function Matches() {
 }
 
 <LinearGradient
-    colors= {["#FF76CE" , "F72C5B",]} 
+    colors= {["#D5B898" , "#DFC2A2",]}   
     start={{x: 0.9, y: 1}}
     end={{x: 300, y: 1}}
   />
@@ -443,31 +440,29 @@ const styles = StyleSheet.create({
   },
   formRegister: {
     width: '100%',
-    height:'70%',
     maxWidth: 400,
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
+    backgroundColor: '#fff7f0',
+    borderRadius: 8,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    boxShadowColor: '#000',
+    boxShadowOffset: { width: 0, height: 2 },
+    boxShadowOpacity: 0.2,
+    boxShadowRadius: 5,
     elevation: 5,
-    gap:50,
+    gap:5,
   },
   formLogin: {
     width: '100%',
-    height:'60%',
     maxWidth: 400,
-    backgroundColor: '#faedf6',
+    backgroundColor: '#fff7f0',
     borderRadius: 10,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 5,
+    boxShadowColor: '#000',
+    boxShadowOffset: { width: 0, height: 2 },
+    boxShadowOpacity: 0.2,
+    boxShadowRadius: 5,
     elevation: 5,
-    gap:50,
+    gap:5,
   },
   header: {
     fontSize: 24,
@@ -483,7 +478,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#ffffff',
   },
   buttonContainer: {
     marginVertical: 10,
@@ -525,7 +520,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
   },
   button: {
-    backgroundColor: '#FF76CE',
+    backgroundColor: '#DFC2A2',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
@@ -537,14 +532,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   secondaryButton: {
-    backgroundColor: '#f7c1e7',
+    backgroundColor: '#f0d5b9',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
     marginTop: 10,
   },
   secondaryButtonText: {
-    color: '#800554',
+    color: '#403326',
     fontWeight: 'bold',
     fontSize: 16,
   },
