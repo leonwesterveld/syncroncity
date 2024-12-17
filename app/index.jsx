@@ -196,10 +196,47 @@ export default function App() {
 }
 
 function Profile({ user, onLogout }) {
+  const [gedachtes, setGedachtes] = useState([]);
+  const [dromen, setDromen] = useState([]);
+  const [errorMessage, setErrorMessage] = useState("");
+
+  useEffect(() => {
+    const fetchGedachtes = async () => {
+      try {
+        const response = await fetch(`${API_URL}/Gedachtes/${user.name}`);
+        const data = await response.json();
+        if (response.ok) {
+          setGedachtes(data.gedachtes);
+        } else {
+          setErrorMessage(data.message || "Failed to fetch gedachtes.");
+        }
+      } catch (error) {
+        setErrorMessage("Something went wrong while fetching gedachtes.");
+      }
+    };
+
+    const fetchDromen = async () => {
+      try {
+        const response = await fetch(`${API_URL}/Dromen/${user.name}`);
+        const data = await response.json();
+        if (response.ok) {
+          setDromen(data.dromen);
+        } else {
+          setErrorMessage(data.message || "Failed to fetch dromen.");
+        }
+      } catch (error) {
+        setErrorMessage("Something went wrong while fetching dromen.");
+      }
+    };
+
+    fetchGedachtes();
+    fetchDromen();
+  }, [user.name]);
+
   return (
     <LinearGradient
       colors={['#FF76CE', '#FFCFEF']}
-      style={styles.container} // Container styles hier gebruiken
+      style={styles.container}
       start={{ x: 0.3, y: 0 }}
       end={{ x: 0.7, y: 1 }}
     >
@@ -207,6 +244,45 @@ function Profile({ user, onLogout }) {
         <Text style={styles.header}>Profile</Text>
         <Text>Name: {user.name}</Text>
         <Text>Phone: {user.phone}</Text>
+
+        {/* Display Gedachtes */}
+        <Text style={styles.header}>Jou Gedachtes</Text>
+        {gedachtes.length > 0 ? (
+          gedachtes.map((item, index) => {
+            const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+              day: "numeric",
+              month: "long",
+            });
+            return (
+              <Text key={index}>
+                Op {formattedDate} dacht jij aan {item.selectedValue}.
+              </Text>
+            );
+          })
+        ) : (
+          <Text>Geen Gedachtes gevonden.</Text>
+        )}
+
+        <Text style={styles.header}>Jou Dromen</Text>
+        {dromen.length > 0 ? (
+          dromen.map((item, index) => {
+            const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+              day: "numeric",
+              month: "long",
+            });
+            return (
+              <Text key={index}>
+                Op {formattedDate} droomde jij aan {item.selectedValue}.
+              </Text>
+            );
+          })
+        ) : (
+          <Text>Geen Dromen gevonden.</Text>
+        )}
+
+        {/* Display Error Messages */}
+        {errorMessage && <Text style={styles.alertText}>{errorMessage}</Text>}
+
         <Button title="Logout" onPress={onLogout} />
       </View>
     </LinearGradient>
@@ -219,43 +295,13 @@ function Choises({ user }) {
   const [customValue, setCustomValue] = useState(""); // Store the value entered for "other"
   const [timeValue, setTimeValue] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
-  const [isTimeout, setIsTimeout] = useState(false);
 
-  useEffect(() => {
-    const checkTimeout = async () => {
-      try {
-        const lastSubmissionTime = await AsyncStorage.getItem("submissionTime");
-        console.log("Last submission time:", lastSubmissionTime);  // Debugging line
-        if (lastSubmissionTime) {
-          const timeElapsed = Date.now() - new Date(lastSubmissionTime).getTime();
-          console.log("Time elapsed (ms):", timeElapsed); // Debugging line
-          if (timeElapsed > 3600000) { // 1 hour in milliseconds
-            setIsTimeout(true);
-            setAlertMessage("You can no longer submit your choices after 1 hour.");
-          } else {
-            setIsTimeout(false);
-          }
-        } else {
-          setIsTimeout(false); // No submission time found, assume it's valid
-        }
-      } catch (error) {
-        console.error("Error checking submission time:", error);
-      }
-    };
-
-    checkTimeout();
-  }, []);
 
   const handleButtonPress = (value) => {
     setSelectedButton(value);
   };
 
   const handleSaveChoices = async () => {
-    if (isTimeout) {
-      console.log("Timeout is active, cannot submit choices."); // Debugging line
-      return; // If it's past the timeout, do not submit
-    }
-
     if (!selectedButton) {
       setAlertMessage("Please select either 'denk' or 'droom' first.");
       return;
@@ -395,8 +441,6 @@ const styles = StyleSheet.create({
     padding: 20,
     gap: 10,
   },
-
-
   formRegister: {
     width: '100%',
     height:'70%',
@@ -425,7 +469,6 @@ const styles = StyleSheet.create({
     elevation: 5,
     gap:50,
   },
-
   header: {
     fontSize: 24,
     fontWeight: 'bold',
@@ -433,7 +476,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333',
   },
-
   input: {
     height: 50,
     borderColor: '#ccc',
@@ -443,31 +485,26 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     backgroundColor: '#f9f9f9',
   },
-
   buttonContainer: {
     marginVertical: 10,
   },
-
   alertText: {
     color: 'red',
     marginTop: 10,
     textAlign: 'center',
   },
-
   section: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: 200,
     gap: 10,
   },
-
   section2: {
     flexDirection: 'column',
     gap: 10,
     position: 'relative',
     width: 200,
   },
-
   picker: {
     height: 50,
     width: 200,
@@ -475,7 +512,6 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     gap: 10,
   },
-
   textInput: {
     position: 'absolute',
     top: 0,
@@ -488,7 +524,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingLeft: 10,
   },
-
   button: {
     backgroundColor: '#FF76CE',
     padding: 15,
@@ -496,13 +531,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 10,
   },
-
   buttonText: {
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
   },
-  
   secondaryButton: {
     backgroundColor: '#f7c1e7',
     padding: 15,
@@ -514,6 +547,20 @@ const styles = StyleSheet.create({
     color: '#800554',
     fontWeight: 'bold',
     fontSize: 16,
+  },
+  list: {
+    marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    backgroundColor: '#f9f9f9',
+    borderRadius: 5,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    width: '100%',
+  },
+  listItem: {
+    fontSize: 16,
+    color: '#555',
   },
 });
 
