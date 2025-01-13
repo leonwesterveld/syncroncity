@@ -90,6 +90,7 @@ export default function App() {
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem("user");
+      color="#A66E38";
       setUser(null);
       setIsLoggedIn(false);
     } catch (error) {
@@ -178,7 +179,7 @@ export default function App() {
 
           return <Ionicons name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "red",
+        tabBarActiveTintColor: "#F0BB78",
         tabBarInactiveTintColor: "black",
         headerShown: false,
       })}
@@ -254,48 +255,62 @@ function Profile({ user, onLogout, onNewChoice }) {
       end={{ x: 0.7, y: 1 }}
     >
       <View style={styles.container}>
-        <Text style={styles.header}>Profile</Text>
-        <Text>Name: {user.name}</Text>
-        <Text>Phone: {user.phone}</Text>
+  {/* Profile Block */}
+  <View style={styles.block}>
+    <Text style={styles.header}>Profile</Text>
+    <Text>Name: {user.name}</Text>
+    <Text>Phone: {user.phone}</Text>
+  </View>
 
-        {/* Display Gedachtes */}
-        <Text style={styles.header}>Jou Gedachtes</Text>
-        {gedachtes.length > 0 ? (
-          gedachtes.map((item, index) => {
-            const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
-              day: "numeric",
-              month: "long",
-            });
-            return (
-              <Text key={index}>
-                Op {formattedDate} dacht jij aan {item.selectedValue}.
-              </Text>
-            );
-          })
-        ) : (
-          <Text>Geen Gedachtes gevonden.</Text>
-        )}
+  {/* Jouw Gedachtes Block */}
+  <View style={styles.block}>
+    <Text style={styles.header}>Jouw Gedachtes</Text>
+    {gedachtes.length > 0 ? (
+      gedachtes.map((item, index) => {
+        const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+          day: "numeric",
+          month: "long",
+        });
+        return (
+          <Text key={index}>
+            Op {formattedDate} dacht jij aan {item.selectedValue}.
+          </Text>
+        );
+      })
+    ) : (
+      <Text>Geen Gedachtes gevonden.</Text>
+    )}
+  </View>
 
-        <Text style={styles.header}>Jou Dromen</Text>
-        {dromen.length > 0 ? (
-          dromen.map((item, index) => {
-            const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
-              day: "numeric",
-              month: "long",
-            });
-            return (
-              <Text key={index}>
-                Op {formattedDate} droomde jij aan {item.selectedValue}.
-              </Text>
-            );
-          })
-        ) : (
-          <Text>Geen Dromen gevonden.</Text>
-        )}
+  {/* Jouw Dromen Block */}
+  <View style={styles.block}>
+    <Text style={styles.header}>Jouw Dromen</Text>
+    {dromen.length > 0 ? (
+      dromen.map((item, index) => {
+        const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+          day: "numeric",
+          month: "long",
+        });
+        return (
+          <Text key={index}>
+            Op {formattedDate} droomde jij aan {item.selectedValue}.
+          </Text>
+        );
+      })
+    ) : (
+      <Text>Geen Dromen gevonden.</Text>
+    )}
+  </View>
 
-        {/* Display Error Messages */}
-        <Button style={styles.button} title="Logout" onPress={onLogout} />
-      </View>
+  {/* Logout Button */}
+  <Button 
+    style={styles.button} 
+    title="Logout" 
+    color="#A66E38" 
+    onPress={onLogout} 
+  />
+</View>
+
     </LinearGradient>
   );
 }
@@ -373,13 +388,13 @@ function Choises({ user, onNewChoice }) {
           <Button
             title="denk"
             onPress={() => handleButtonPress("denk")}
-            color={selectedButton === "denk" ? "red" : "#7f8c8d"}
+            color={selectedButton === "denk" ? "#A66E38" : "#7f8c8d"}
             style={styles.red}
           />
           <Button
             title="droom"
             onPress={() => handleButtonPress("droom")}
-            color={selectedButton === "droom" ? "red" : "#7f8c8d"}
+            color={selectedButton === "droom" ? "#A66E38" : "#7f8c8d"}
           />
         </View>
 
@@ -420,7 +435,9 @@ function Choises({ user, onNewChoice }) {
         </Picker>
 
         {/* Save button */}
-        <Button style={styles.button} title="Save Choices" onPress={handleSaveChoices} />
+        <Button style={styles.button} title="Save Choices"
+        color="#A66E38"
+         onPress={handleSaveChoices} />
       </View>
     </LinearGradient>
   );
@@ -429,7 +446,7 @@ function Choises({ user, onNewChoice }) {
 function Matches() {
   return (<LinearGradient
     colors= {["#D5B898" , "#DFC2A2",]}    
-    style={styles.container} // Container styles hier gebruiken
+    style={styles.container} 
     start={{ x: 0.3, y: 0 }}
     end={{ x: 0.7, y: 1 }}
   >
@@ -449,10 +466,30 @@ function Matches() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', 
+    alignItems: 'center', 
     padding: 20,
-    gap: 10,
+    backgroundColor: "##D5B898", 
+    gap: 10, 
+  },
+  block: {
+    marginBottom: 20,
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, 
+    width: '80%',
+    alignself:'center',
+  },
+  outerBlock: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: '#fff', 
+    padding: 20,
   },
   formRegister: {
     width: '100%',
@@ -460,10 +497,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff7f0',
     borderRadius: 8,
     padding: 20,
-    boxShadowColor: '#000',
-    boxShadowOffset: { width: 0, height: 2 },
-    boxShadowOpacity: 0.2,
-    boxShadowRadius: 5,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
     elevation: 5,
     gap: 5,
   },
@@ -473,18 +510,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff7f0',
     borderRadius: 10,
     padding: 20,
-    boxShadowColor: '#000',
-    boxShadowOffset: { width: 0, height: 2 },
-    boxShadowOpacity: 0.2,
-    boxShadowRadius: 5,
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
     elevation: 5,
     gap: 5,
   },
   header: {
-    fontSize: 24,
+    fontSize: 20, 
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    marginBottom: 10, 
+    textAlign: 'center', 
     color: '#333',
   },
   input: {
@@ -574,3 +611,4 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
+  
