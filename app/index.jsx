@@ -184,17 +184,17 @@ export default function App() {
       })}
     >
       <Tab.Screen name="Profile">
-        {() => <Profile user={user} onLogout={handleLogout} />}
+      {() => <Profile user={user} onLogout={handleLogout} onNewChoice={(cb) => handleNewChoice = cb} />}
       </Tab.Screen>
       <Tab.Screen name="Home">
-        {() => <Choises user={user} />}
+      {() => <Choises user={user} onNewChoice={handleNewChoice} />}
       </Tab.Screen>
       <Tab.Screen name="Matches" component={Matches} />
     </Tab.Navigator>
   );
 }
 
-function Profile({ user, onLogout }) {
+function Profile({ user, onLogout, onNewChoice }) {
   const [gedachtes, setGedachtes] = useState([]);
   const [dromen, setDromen] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
@@ -232,9 +232,23 @@ function Profile({ user, onLogout }) {
     fetchDromen();
   }, [user.name]);
 
+  // Voeg nieuwe keuze toe aan de juiste lijst
+  const handleNewChoice = (newChoice) => {
+    if (newChoice.type === "denk") {
+      setGedachtes((prevGedachtes) => [...prevGedachtes, newChoice]);
+    } else if (newChoice.type === "droom") {
+      setDromen((prevDromen) => [...prevDromen, newChoice]);
+    }
+  };
+
+  // Ontvang updates van Choises via de prop
+  useEffect(() => {
+    if (onNewChoice) onNewChoice(handleNewChoice);
+  }, []);
+
   return (
     <LinearGradient
-      colors= {["#D5B898" , "#DFC2A2",]}    
+      colors={["#D5B898", "#DFC2A2"]}
       style={styles.container}
       start={{ x: 0.3, y: 0 }}
       end={{ x: 0.7, y: 1 }}
@@ -280,20 +294,18 @@ function Profile({ user, onLogout }) {
         )}
 
         {/* Display Error Messages */}
-
         <Button style={styles.button} title="Logout" onPress={onLogout} />
       </View>
     </LinearGradient>
   );
 }
 
-function Choises({ user }) {
-  const [selectedButton, setSelectedButton] = useState(""); // Track which button is selected
+function Choises({ user, onNewChoice }) {
+  const [selectedButton, setSelectedButton] = useState("");
   const [selectedValue, setSelectedValue] = useState("");
-  const [customValue, setCustomValue] = useState(""); // Store the value entered for "other"
+  const [customValue, setCustomValue] = useState("");
   const [timeValue, setTimeValue] = useState("");
   const [alertMessage, setAlertMessage] = useState("");
-
 
   const handleButtonPress = (value) => {
     setSelectedButton(value);
@@ -310,21 +322,27 @@ function Choises({ user }) {
         ? `${API_URL}/Gedachtes`
         : `${API_URL}/Dromen`;
 
+    const newChoice = {
+      type: selectedButton,
+      name: user.name,
+      selectedValue: selectedValue === "other" ? customValue : selectedValue,
+      timeValue,
+      createdAt: new Date().toISOString(),
+    };
+
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: user.name,
-          selectedValue: selectedValue === "other" ? customValue : selectedValue,
-          timeValue,
-        }),
+        body: JSON.stringify(newChoice),
       });
       const data = await response.json();
 
       if (response.ok) {
         setAlertMessage("Choices saved successfully.");
-        await AsyncStorage.setItem("submissionTime", new Date().toString()); // Store current time of submission
+        if (onNewChoice) {
+          onNewChoice(newChoice);
+        }
       } else {
         setAlertMessage(data.message || "Failed to save choices.");
       }
@@ -344,69 +362,67 @@ function Choises({ user }) {
 
   return (
     <LinearGradient
-        colors= {["#D5B898" , "#DFC2A2",]}    
-        style={styles.container} // Container styles hier gebruiken
-        start={{ x: 0.3, y: 0 }}
-        end={{ x: 0.7, y: 1 }}
-      >
-        <View style={styles.container}>
-          {/* Buttons to select database */}
-          <View style={styles.section}>
-            <Button
-              title="denk"
-              onPress={() => handleButtonPress("denk")}
-              color={selectedButton === "denk" ? "red" : "#7f8c8d"}
-              style={styles.red}
-            />
-            <Button
-              title="droom"
-              onPress={() => handleButtonPress("droom")}
-              color={selectedButton === "droom" ? "red" : "#7f8c8d"}
-            />
-          </View>
-
-          {/* Choice Picker */}
-          <View style={styles.section2}>
-            <Picker
-              selectedValue={selectedValue}
-              style={styles.picker}
-              onValueChange={handleValueChange}
-            >
-              <Picker.Item label="ding1" value="ding1" />
-              <Picker.Item label="ding2" value="ding2" />
-              <Picker.Item label="ding3" value="ding3" />
-              <Picker.Item label="ding4" value="ding4" />
-              <Picker.Item label="other" value="other" />
-            </Picker>
-            {selectedValue === "other" && (
-              <TextInput
-                style={styles.textInput}
-                placeholder="Enter"
-                value={customValue}
-                onChangeText={setCustomValue}
-              />
-            )}
-          </View>
-
-          {/* Time Picker */}
-          <Picker
-            selectedValue={timeValue}
-            style={styles.picker}
-            onValueChange={(value) => setTimeValue(value)}
-          >
-            <Picker.Item label="zo juist" value="zojuist" />
-            <Picker.Item label="1 uur geleden" value="1uur" />
-            <Picker.Item label="2 uur geleden" value="2uur" />
-            <Picker.Item label="vandaag" value="vandaag" />
-            <Picker.Item label="gister" value="gister" />
-          </Picker>
-
-          {/* Save button */}
-          <Button style={styles.button} title="Save Choices" onPress={handleSaveChoices} />
-
-          {/* Display alert message */}
+      colors={["#D5B898", "#DFC2A2"]}
+      style={styles.container}
+      start={{ x: 0.3, y: 0 }}
+      end={{ x: 0.7, y: 1 }}
+    >
+      <View style={styles.container}>
+        {/* Buttons to select database */}
+        <View style={styles.section}>
+          <Button
+            title="denk"
+            onPress={() => handleButtonPress("denk")}
+            color={selectedButton === "denk" ? "red" : "#7f8c8d"}
+            style={styles.red}
+          />
+          <Button
+            title="droom"
+            onPress={() => handleButtonPress("droom")}
+            color={selectedButton === "droom" ? "red" : "#7f8c8d"}
+          />
         </View>
-      </LinearGradient>
+
+        {/* Choice Picker */}
+        <View style={styles.section2}>
+          <Picker
+            selectedValue={selectedValue}
+            style={styles.picker}
+            onValueChange={handleValueChange}
+          >
+            <Picker.Item label="ding1" value="ding1" />
+            <Picker.Item label="ding2" value="ding2" />
+            <Picker.Item label="ding3" value="ding3" />
+            <Picker.Item label="ding4" value="ding4" />
+            <Picker.Item label="other" value="other" />
+          </Picker>
+          {selectedValue === "other" && (
+            <TextInput
+              style={styles.textInput}
+              placeholder="Enter"
+              value={customValue}
+              onChangeText={setCustomValue}
+            />
+          )}
+        </View>
+
+        {/* Time Picker */}
+        <Picker
+          selectedValue={timeValue}
+          style={styles.picker}
+          onValueChange={(value) => setTimeValue(value)}
+        >
+          <Picker.Item label="zo juist" value="zojuist" />
+          <Picker.Item label="1 uur geleden" value="1uur" />
+          <Picker.Item label="2 uur geleden" value="2uur" />
+          <Picker.Item label="vandaag" value="vandaag" />
+          <Picker.Item label="gister" value="gister" />
+        </Picker>
+
+        {/* Save button */}
+        <Button style={styles.button} title="Save Choices" onPress={handleSaveChoices} />
+      </View>
+    </LinearGradient>
   );
 }
 
@@ -449,7 +465,7 @@ const styles = StyleSheet.create({
     boxShadowOpacity: 0.2,
     boxShadowRadius: 5,
     elevation: 5,
-    gap:5,
+    gap: 5,
   },
   formLogin: {
     width: '100%',
@@ -462,7 +478,7 @@ const styles = StyleSheet.create({
     boxShadowOpacity: 0.2,
     boxShadowRadius: 5,
     elevation: 5,
-    gap:5,
+    gap: 5,
   },
   header: {
     fontSize: 24,
@@ -558,4 +574,3 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
-
