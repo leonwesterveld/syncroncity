@@ -4,6 +4,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
+import { TabView, SceneMap } from 'react-native-tab-view';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -199,6 +201,11 @@ function Profile({ user, onLogout, onNewChoice }) {
   const [gedachtes, setGedachtes] = useState([]);
   const [dromen, setDromen] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [index, setIndex] = useState(0);
+  const [routes] = useState([
+    { key: 'gedachten', title: 'Gedachtes' },
+    { key: 'dromen', title: 'Dromen' }
+  ]);
 
   useEffect(() => {
     const fetchGedachtes = async () => {
@@ -247,6 +254,51 @@ function Profile({ user, onLogout, onNewChoice }) {
     if (onNewChoice) onNewChoice(handleNewChoice);
   }, []);
 
+  const renderGedachtes = () => (
+    <View style={styles.renderSection}>
+      {gedachtes.length > 0 ? (
+        gedachtes.map((item, index) => {
+          const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+            day: "numeric",
+            month: "long",
+          });
+          return (
+            <Text key={index}>
+              Op {formattedDate} dacht jij aan {item.selectedValue}.
+            </Text>
+          );
+        })
+      ) : (
+        <Text>Geen Gedachtes gevonden.</Text>
+      )}
+    </View>
+  );
+
+  const renderDromen = () => (
+    <View style={styles.renderSection}>
+      {dromen.length > 0 ? (
+        dromen.map((item, index) => {
+          const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
+            day: "numeric",
+            month: "long",
+          });
+          return (
+            <Text key={index}>
+              Op {formattedDate} droomde jij aan {item.selectedValue}.
+            </Text>
+          );
+        })
+      ) : (
+        <Text>Geen Dromen gevonden.</Text>
+      )}
+    </View>
+  );
+
+  const renderScene = SceneMap({
+    gedachten: renderGedachtes,
+    dromen: renderDromen,
+  });
+
   return (
     <LinearGradient
       colors={["#D5B898", "#DFC2A2"]}
@@ -255,65 +307,34 @@ function Profile({ user, onLogout, onNewChoice }) {
       end={{ x: 0.7, y: 1 }}
     >
       <View style={styles.container}>
-  {/* Profile Block */}
-  <View style={styles.block}>
-    <Text style={styles.header}>Profile</Text>
-    <Text>Name: {user.name}</Text>
-    <Text>Phone: {user.phone}</Text>
-  </View>
+        {/* Profile Block */}
+        <View style={styles.block}>
+          <Text style={styles.header}>Profile</Text>
+          <Text>Name: {user.name}</Text>
+          <Text>Phone: {user.phone}</Text>
+        </View>
 
-  {/* Jouw Gedachtes Block */}
-  <View style={styles.block}>
-    <Text style={styles.header}>Jouw Gedachtes</Text>
-    {gedachtes.length > 0 ? (
-      gedachtes.map((item, index) => {
-        const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
-          day: "numeric",
-          month: "long",
-        });
-        return (
-          <Text key={index}>
-            Op {formattedDate} dacht jij aan {item.selectedValue}.
-          </Text>
-        );
-      })
-    ) : (
-      <Text>Geen Gedachtes gevonden.</Text>
-    )}
-  </View>
+        {/* TabView */}
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          style={styles.block}
+          onIndexChange={setIndex}
+          initialLayout={{ width: 400 }}
+        />
 
-  {/* Jouw Dromen Block */}
-  <View style={styles.block}>
-    <Text style={styles.header}>Jouw Dromen</Text>
-    {dromen.length > 0 ? (
-      dromen.map((item, index) => {
-        const formattedDate = new Date(item.createdAt).toLocaleDateString("nl-NL", {
-          day: "numeric",
-          month: "long",
-        });
-        return (
-          <Text key={index}>
-            Op {formattedDate} droomde jij aan {item.selectedValue}.
-          </Text>
-        );
-      })
-    ) : (
-      <Text>Geen Dromen gevonden.</Text>
-    )}
-  </View>
-
-  {/* Logout Button */}
-  <Button 
-    style={styles.button} 
-    title="Logout" 
-    color="#A66E38" 
-    onPress={onLogout} 
-  />
-</View>
-
+        {/* Logout Button */}
+        <Button
+          style={styles.button}
+          title="Logout"
+          color="#A66E38"
+          onPress={onLogout}
+        />
+      </View>
     </LinearGradient>
   );
 }
+
 
 function Choises({ user, onNewChoice }) {
   const [selectedButton, setSelectedButton] = useState("");
@@ -455,7 +476,7 @@ function Matches() {
     </View>
     </LinearGradient>
   );
-}
+};
 
 <LinearGradient
     colors= {["#D5B898" , "#DFC2A2",]}   
@@ -466,9 +487,11 @@ function Matches() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     justifyContent: 'center', 
     alignItems: 'center', 
-    padding: 20,
+    maxWidth: '100%',
+    padding: 10,
     backgroundColor: "##D5B898", 
     gap: 10, 
   },
@@ -482,14 +505,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 3, 
-    width: '80%',
+    width: '100%',
     alignself:'center',
   },
-  outerBlock: {
-    width: '100%',
-    height: '100%',
-    backgroundColor: '#fff', 
-    padding: 20,
+  renderSection: {
+    gap: 22,
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    maxWidth: '90%',
   },
   formRegister: {
     width: '100%',
@@ -611,4 +635,3 @@ const styles = StyleSheet.create({
     color: '#555',
   },
 });
-  
